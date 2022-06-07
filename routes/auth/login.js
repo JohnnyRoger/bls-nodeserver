@@ -3,12 +3,12 @@ const crypto = require("crypto");
 const router = express.Router();
 //* Login API
 router.post("/", function (req, res, next) {
-  const {performance} = require("perf_hooks");
+  const { performance } = require("perf_hooks");
   const mysql = require("mysql2");
   const config = {
-    host: "31.187.75.30",
-    user: "justexplore",
-    password: "@Slasher15@",
+    host: "207.148.76.241",
+    user: "root",
+    password: "gwapo",
     database: "blssystem",
   };
   const connection = mysql.createConnection(config);
@@ -24,16 +24,16 @@ router.post("/", function (req, res, next) {
     }
   });
   connection.query(
-    "SELECT * FROM useraccount WHERE username = '" + req.body.setusername + "' AND mpassword = '" + hash + "'",
+    "SELECT * FROM useraccount WHERE username = '" + req.body.setusername + "' AND mpassword = '" + req.body.setpassword + "'",
     function (err, rows, field) {
       if (!err) {
         if (rows.length > 0) {
           var startTime = performance.now();
           const privilege = rows[0]['privilege'];
-          if (privilege == "ADMIN"){
+          if (privilege == "ADMIN") {
             res.status(200).send();
             res.end;
-          }else{
+          } else {
             res.status(201).send();
             res.end;
           }

@@ -3,12 +3,12 @@ var router = express.Router();
 
 //* Select Location API
 router.get("/", function (req, res, next) {
-  const {performance} = require("perf_hooks");
+  const { performance } = require("perf_hooks");
   const mysql = require("mysql2");
   const config = {
-    host: "31.187.75.30",
-    user: "justexplore",
-    password: "@Slasher15@",
+    host: "207.148.76.241",
+    user: "root",
+    password: "gwapo",
     database: "blssystem",
   };
   const connection = mysql.createConnection(config);
@@ -20,7 +20,8 @@ router.get("/", function (req, res, next) {
     }
   });
   connection.query(
-    "SELECT * FROM reader",
+    "SELECT t2.locname, t1.lastname, t1.firstname, t1.middlename, t1.address, t1.contactno, t1.designation  FROM reader t1" +
+    " INNER JOIN location t2 ON t1.locserial = t2.locserial",
     function (err, rows) {
       if (!err) {
         if (rows.length > 0) {
