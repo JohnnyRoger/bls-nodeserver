@@ -45,9 +45,8 @@ router.get("/", function (req, res, next) {
         res.end;
         console.log("Invalid MySQL Query!");
       }
-    }
-  );
-  connection.end();
+      connection.end();
+    });
 });
 
 module.exports = router;

@@ -20,7 +20,7 @@ router.get("/", function (req, res, next) {
     }
   });
   connection.query("SELECT t1.headerserial 'serial', CONCAT(t2.lastname, ', ', t2.firstname, ' ', t2.middlename) 'reader', t3.locname 'location', t1.`week` 'week', t1.stationno 'station', t4.growername 'grower', " +
-    " t1.spraytype 'spraytype', t1.week3color 'week3color', t1.week5color 'week5color', t1.week7color 'week7color', t1.week9color 'week9color',t1.remarks 'remarks', t1.dateencoded 'dateencoded', " +
+    " t1.spraytype 'spraytype', t1.week3color 'week3color', t1.week5color 'week5color', t1.week7color 'week7color', t1.week9color 'week9color',t1.remarks 'remarks', DATE_FORMAT(t1.dateencoded,'%Y-%m-%d %h:%i:%s %p') 'dateencoded', " +
     " (SELECT e1.yli from details e1 where e1.sampleno = 'SAMPLE 1' and e1.headerserial = t1.headerserial) 'yli1', " +
     " (SELECT e1.yls from details e1 where e1.sampleno = 'SAMPLE 1' and e1.headerserial = t1.headerserial) 'yls1', " +
     " (SELECT e1.ylf from details e1 where e1.sampleno = 'SAMPLE 1' and e1.headerserial = t1.headerserial) 'ylf1', " +
@@ -131,22 +131,25 @@ router.get("/", function (req, res, next) {
     " (SELECT e1.wk7 from details e1 where e1.sampleno = 'SAMPLE 10' and e1.headerserial = t1.headerserial) 'w710', " +
     " (SELECT e1.wk9 from details e1 where e1.sampleno = 'SAMPLE 10' and e1.headerserial = t1.headerserial) 'w910', " +
     " (SELECT e1.le from details e1 where e1.sampleno = 'SAMPLE 10' and e1.headerserial = t1.headerserial) 'le10', " +
-    " (SELECT e1.yli from details e1 where e1.sampleno = 'AVERAGE' and e1.headerserial = t1.headerserial) 'ylia', " +
-    " (SELECT e1.yls from details e1 where e1.sampleno = 'AVERAGE' and e1.headerserial = t1.headerserial) 'ylsa', " +
-    " (SELECT e1.ylf from details e1 where e1.sampleno = 'AVERAGE' and e1.headerserial = t1.headerserial) 'ylfa', " +
-    " (SELECT e1.tlf from details e1 where e1.sampleno = 'AVERAGE' and e1.headerserial = t1.headerserial) 'tlfa', " +
-    " (SELECT e1.ust from details e1 where e1.sampleno = 'AVERAGE' and e1.headerserial = t1.headerserial) 'usta', " +
-    " (SELECT e1.st from details e1 where e1.sampleno = 'AVERAGE' and e1.headerserial = t1.headerserial) 'sta', " +
-    " (SELECT e1.wk3 from details e1 where e1.sampleno = 'AVERAGE' and e1.headerserial = t1.headerserial) 'w3a', " +
-    " (SELECT e1.wk5 from details e1 where e1.sampleno = 'AVERAGE' and e1.headerserial = t1.headerserial) 'w5a', " +
-    " (SELECT e1.wk7 from details e1 where e1.sampleno = 'AVERAGE' and e1.headerserial = t1.headerserial) 'w7a', " +
-    " (SELECT e1.wk9 from details e1 where e1.sampleno = 'AVERAGE' and e1.headerserial = t1.headerserial) 'w9a', " +
-    " (SELECT e1.le from details e1 where e1.sampleno = 'AVERAGE' and e1.headerserial = t1.headerserial) 'lea' " +
+
+    " ROUND(COALESCE(SUM(t5.yli) / (SELECT COUNT(e1.yli) FROM details e1 WHERE e1.yli > 0 AND e1.headerserial = t1.headerserial),0.0),2) 'ylia'," +
+    " ROUND(COALESCE(SUM(t5.yls) / (SELECT COUNT(e1.yls) FROM details e1 WHERE e1.yls > 0 AND e1.headerserial = t1.headerserial),0.0),2) 'ylsa'," +
+    " ROUND(COALESCE(SUM(t5.ylf) / (SELECT COUNT(e1.ylf) FROM details e1 WHERE e1.ylf > 0 AND e1.headerserial = t1.headerserial),0.0),2) 'ylfa'," +
+    " ROUND(COALESCE(SUM(t5.tlf) / (SELECT COUNT(e1.tlf) FROM details e1 WHERE e1.tlf > 0 AND e1.headerserial = t1.headerserial),0.0),2) 'tlfa'," +
+    " ROUND(COALESCE(SUM(t5.ust) / (SELECT COUNT(e1.ust) FROM details e1 WHERE e1.ust > 0 AND e1.headerserial = t1.headerserial),0.0),2) 'usta'," +
+    " ROUND(COALESCE(SUM(t5.st) / (SELECT COUNT(e1.st) FROM details e1 WHERE e1.st > 0 AND e1.headerserial = t1.headerserial),0.0),2) 'sta'," +
+    " ROUND(COALESCE(SUM(t5.wk3) / (SELECT COUNT(e1.wk3) FROM details e1 WHERE e1.wk3 > 0 AND e1.headerserial = t1.headerserial),0.0),2) 'w3a'," +
+    " ROUND(COALESCE(SUM(t5.wk5) / (SELECT COUNT(e1.wk5) FROM details e1 WHERE e1.wk5 > 0 AND e1.headerserial = t1.headerserial),0.0),2) 'w5a'," +
+    " ROUND(COALESCE(SUM(t5.wk7) / (SELECT COUNT(e1.wk7) FROM details e1 WHERE e1.wk7 > 0 AND e1.headerserial = t1.headerserial),0.0),2) 'w7a'," +
+    " ROUND(COALESCE(SUM(t5.wk9) / (SELECT COUNT(e1.wk9) FROM details e1 WHERE e1.wk9 > 0 AND e1.headerserial = t1.headerserial),0.0),2) 'w9a'," +
+    " ROUND(COALESCE(SUM(t5.le) / (SELECT COUNT(e1.le) FROM details e1 WHERE e1.le > 0 AND e1.headerserial = t1.headerserial),0.0),2) 'lea'" +
+
     " FROM header t1 " +
     " INNER JOIN reader t2 ON t1.readerserial = t2.readerserial " +
     " INNER JOIN location t3 ON t1.locserial = t3.locserial" +
     " INNER JOIN grower t4 ON t1.growerserial = t4.growerserial" +
     " INNER JOIN details t5 ON t1.headerserial = t5.headerserial" +
+    //" WHERE t1.readerserial = '" + req.body.reader + "' " +
     " GROUP BY t1.headerserial;",
     function (err, rows) {
       if (!err) {
@@ -158,7 +161,7 @@ router.get("/", function (req, res, next) {
           res.end;
           var endTime = performance.now();
           console.log(`Execution Duration: ${endTime - startTime} milliseconds`);
-          console.log("reading Successfully Retrieve");
+          console.log("Reading Successfully Retrieve");
         } else {
           res.status(201).send();
           res.end;

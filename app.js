@@ -5,6 +5,8 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
 const indexRouter = require("./routes/index");
+//* NodeMailer
+const nodeMailerRouter = require("./routes/email/mailer");
 //* Authentication Router
 const loginRouter = require("./routes/auth/login");
 const registerRouter = require("./routes/auth/register");
@@ -25,6 +27,15 @@ const retrieveReaderRouter = require("./routes/reader/retrievereader");
 const retrieveReadingRouter = require("./routes/reading/retrievereading");
 const uploadReadingHeaderRouter = require("./routes/reading/uploadreadingheader");
 const uploadReadingDetailsRouter = require("./routes/reading/uploadreadingdetails");
+//* Rainfall Router
+const retrieveRainfallRouter = require("./routes/rainfall/retrieverainfall");
+const uploadRainfallRouter = require("./routes/rainfall/uploadrainfall");
+//* Average Router
+const retrieveAverageStationRouter = require("./routes/average/retrievestationaverage");
+const retrieveAverageWeekRouter = require("./routes/average/retrieveweekaverage");
+const retrieveAverageRouter = require("./routes/average/retrieveaverage");
+const retrieveLocationAverageRouter = require("./routes/average/retrievelocationaverage");
+
 const app = express();
 
 // view engine setup
@@ -38,6 +49,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
+//* Node Mailer Path
+app.use("/nodemailer", nodeMailerRouter);
 //* Authentication Path
 app.use("/login", loginRouter);
 app.use("/register", registerRouter);
@@ -58,7 +71,14 @@ app.use("/retrievereader", retrieveReaderRouter);
 app.use("/retrievereading", retrieveReadingRouter);
 app.use("/uploadreadingheader", uploadReadingHeaderRouter);
 app.use("/uploadreadingdetails", uploadReadingDetailsRouter);
-
+//* Rainfall Path
+app.use("/retrieverainfall", retrieveRainfallRouter);
+app.use("/uploadrainfall", uploadRainfallRouter);
+//* Average Path
+app.use("/retrievestationaverage", retrieveAverageStationRouter);
+app.use("/retrieveweekaverage", retrieveAverageWeekRouter);
+app.use("/retrieveaverage", retrieveAverageRouter);
+app.use("/retrievelocationaverage", retrieveLocationAverageRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

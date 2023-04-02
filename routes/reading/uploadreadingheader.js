@@ -9,8 +9,9 @@ router.post("/", function (req, res, next) {
   const config = {
     host: "207.148.76.241",
     user: "root",
-    password: "gwapo",
+    passwordSha1: Buffer.from('d6f0ad7752f4a2931bbd0251e64d5bbda8c9ab19', 'hex'),
     database: "blssystem",
+
   };
 
   //* Crypto Encryption
@@ -26,7 +27,9 @@ router.post("/", function (req, res, next) {
 
   //* Convert To Serial
   connection.query(
-    "SELECT locserial,(select e1.growerserial from grower e1 where e1.growername = '" + req.body.grower + "') 'growerserial',(select e1.readerserial from useraccount e1 where e1.username = '" + req.body.reader + "') 'readerserial' from location where locname = '" + req.body.location + "'",
+    "SELECT locserial,(select e1.growerserial from grower e1 where e1.growername = '" + req.body.grower + "') 'growerserial', " +
+    " (select e1.readerserial from reader e1 where concat(e1.lastname,', ',e1.firstname, ' ',e1.middlename) = '" + req.body.reader + "') 'readerserial' " +
+    " from location where locname = '" + req.body.location + "'",
     function (err, rows) {
       if (!err) {
         if (rows.length > 0) {
@@ -38,7 +41,7 @@ router.post("/", function (req, res, next) {
           let formatted = dt.format('Y-m-d H:M:S');
           //* Save Reader Data
           connection.query(
-            "INSERT INTO header (headerserial,locserial,week,growerserial,readerserial,stationno,spraytype,week3color,week5color,week7color,week9color,remarks,dateencoded,dateuploaded,isdelete) values ('" + req.body.id + "','" + locationserial + "','" + req.body.week + "','" + growerserial
+            "INSERT IGNORE INTO header (headerserial,locserial,week,growerserial,readerserial,stationno,spraytype,week3color,week5color,week7color,week9color,remarks,dateencoded,dateuploaded,isdelete) values ('" + req.body.id + "','" + locationserial + "','" + req.body.week + "','" + growerserial
             + "','" + readerserial + "','" + req.body.station + "','" + req.body.spraytype + "','" + req.body.w3color + "','" + req.body.w5color + "','" + req.body.w7color + "','" + req.body.w9color + "','" + req.body.remarks + "','" + req.body.dateencoded + "', '" + formatted + "', 0)",
             function (err, result) {
               if (!err) {
@@ -54,12 +57,13 @@ router.post("/", function (req, res, next) {
               } else {
                 res.status(202).send();
                 res.end;
-                console.log("Invalid MySQL Query!");
+                //console.log("Invalid MySQL Query!");
                 console.log(err);
               }
+              connection.end();
             }
           );
-          connection.end();
+
 
           var endTime = performance.now();
           console.log(`Execution Duration: ${endTime - startTime} milliseconds`);
@@ -69,6 +73,7 @@ router.post("/", function (req, res, next) {
       } else {
         console.log("Invalid MySQL Query!");
       }
+      connection.end();
     }
   );
 

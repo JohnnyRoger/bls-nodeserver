@@ -1,1 +1,2 @@
-# bls-nodeserver
+# ConstrucoreNodeServer
+Construcore Node Server for mobile application

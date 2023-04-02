@@ -30,11 +30,14 @@ router.post("/", function (req, res, next) {
         if (rows.length > 0) {
           var startTime = performance.now();
           const privilege = rows[0]['privilege'];
-          if (privilege == "ADMIN") {
+          if (privilege == "ADMIN-BASE") {
             res.status(200).send();
             res.end;
-          } else {
+          } else if (privilege == "ADMIN-FARM") {
             res.status(201).send();
+            res.end;
+          } else {
+            res.status(202).send();
             res.end;
           }
           var endTime = performance.now();
@@ -42,17 +45,16 @@ router.post("/", function (req, res, next) {
           console.log("Authentication Success!");
 
         } else {
-          res.status(202).send();
+          res.status(203).send();
           res.end;
           console.log("Authentication Failed!");
         }
       } else {
-        res.status(203).send();
+        res.status(204).send();
         res.end;
         console.log("Invalid MySQL Query!");
       }
-    }
-  );
-  connection.end();
+      connection.end();
+    });
 });
 module.exports = router;
